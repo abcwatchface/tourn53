@@ -2225,13 +2225,17 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
 
             print(f"Best rate: {best_log['learning_rate']}")
 
+        except Exception as e:
+            print(f"Failed to get learning rate: {e}")
+
+        try:
             runtimes = parse_runtime_logs(task_id)
             docker_runtime = runtimes[0]['train_runtime']/config['max_steps']
 
             print(f"Avg runtime: {docker_runtime}")
 
         except Exception as e:
-            print(f"Failed to get learning rate: {e}")
+            print(f"Failed to get avg runtime: {e}")
 
 
         docker_failed = True
