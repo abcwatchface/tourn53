@@ -2154,7 +2154,7 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
                     print("Training subprocess OutOfMemoryError!", flush=True)
                     if bdx < len(docker_batch):
                         bdx = bdx + 1
-                    if dummy_batch =< 8:
+                    if dummy_batch <= 8:
                         idx = idx + 1
                         # bdx = bdx - 1
                     docker_failed = True
@@ -2368,7 +2368,7 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
                         print("Training subprocess OutOfMemoryError!", flush=True)
                         if bdx < len(docker_batch):
                             bdx = bdx + 1
-                        if dummy_batch =< 8:
+                        if dummy_batch <= 8:
                             idx = idx + 1
                             # bdx = bdx - 1
                         docker_failed = True
