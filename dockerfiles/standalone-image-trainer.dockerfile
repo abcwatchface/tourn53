@@ -7,13 +7,17 @@ RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 RUN pip install aiohttp pydantic requests toml \
     "fiber @ git+https://github.com/rayonlabs/fiber.git@2.4.0" \
     fastapi uvicorn httpx loguru python-dotenv \
-    scipy numpy datasets tenacity minio huggingface_hub \
+    scipy numpy datasets tenacity minio huggingface_hub huggingface_hub[cli] \
     transformers==4.46.2 pandas==2.2.3 tiktoken==0.8.0 sentencepiece==0.2.0 peft Pillow==11.1.0 PyYAML \
     requests huggingface_hub
+
+RUN huggingface-cli download openai/clip-vit-large-patch14 --local-dir ./secure_checkpoints/models/clip-vit-large-patch14 --local-dir-use-symlinks False
 
 RUN mkdir -p /dataset/configs \
     /dataset/outputs \
     /dataset/images \
+    /workspace/axolotl \
+    /workspace/axolotl/configs \
     /workspace/scripts \
     /workspace/core
 
