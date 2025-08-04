@@ -1192,6 +1192,65 @@ def _adapt_columns_for_chat_dataset(dataset_path: str, dataset_type: ChatTemplat
     return config
 
 
+def get_learning_rate(config: dict, task_type: str, trainable_params: int):
+    """
+    Auto-calculate learning rate based on trainable parameter count 
+    and training type (instruct, dpo, grpo).
+    
+    Args:
+        trainable_params (int): Number of trainable parameters (e.g., LoRA params).
+        training_type (str): One of ['instruct', 'dpo', 'grpo'].
+    
+    Returns:
+        float: Suggested learning rate.
+    """
+
+    # Base coefficient for scaling (adjust per training type)
+
+    if task_type == TaskType.DPOTASK.value:
+        c = 3e-2   # slightly lower than instruct
+    elif task_type == TaskType.INSTRUCTTEXTTASK.value:
+        c = 5e-2   # more forgiving
+    elif task_type == TaskType.GRPOTASK.value:
+        c = 1.5e-2 # RL-based, more sensitive
+    elif task_type == TaskType.CHATTASK.value:
+        c = 5e-2   # more forgiving
+
+    # if training_type.lower() == "instruct":
+    #     c = 5e-2   # more forgiving
+    # elif training_type.lower() == "dpo":
+    #     c = 3e-2   # slightly lower than instruct
+    # elif training_type.lower() == "grpo":
+    #     c = 1.5e-2 # RL-based, more sensitive
+    # else:
+    #     raise ValueError("training_type must be 'instruct', 'dpo', or 'grpo'.")
+
+    # Scale LR inversely with sqrt of params
+    lr = c / (trainable_params ** 0.5)
+
+    # Clamp to reasonable bounds for stability
+
+    if task_type == TaskType.DPOTASK.value:
+        lr = max(min(lr, 5e-4), 3e-5)
+    elif task_type == TaskType.INSTRUCTTEXTTASK.value:
+        lr = max(min(lr, 1e-3), 5e-5)
+    elif task_type == TaskType.GRPOTASK.value:
+        lr = max(min(lr, 2e-4), 1e-5)
+    elif task_type == TaskType.CHATTASK.value:
+        lr = max(min(lr, 1e-3), 5e-5)
+
+    # if training_type.lower() == "instruct":
+    #     lr = max(min(lr, 1e-3), 5e-5)
+    # elif training_type.lower() == "dpo":
+    #     lr = max(min(lr, 5e-4), 3e-5)
+    # elif training_type.lower() == "grpo":
+    #     lr = max(min(lr, 2e-4), 1e-5)
+
+    config['learning_rate'] = lr
+
+    return config
+
+
 def parse_runtime_logs(task_id: str):
     import re
     import ast
@@ -1961,6 +2020,8 @@ def create_config(task_id, model, dataset, dataset_type, file_format, output_dir
                     print(f"trainable_percent: {trainable_percent}")
 
         config = customize_config(config, task_type, model, model_path, all_params)
+
+        config = get_learning_rate(config, task_type, trainable_params)
 
     except Exception as e:
         print(f"Error checking and logging base model size: {e}")
