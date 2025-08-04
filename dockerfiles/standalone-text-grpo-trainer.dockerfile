@@ -14,6 +14,8 @@ RUN mkdir -p /workspace/axolotl/configs \
     /workspace/axolotl/data \
     /workspace/input_data
 
+ENV CONFIG_DIR="/workspace/axolotl/configs"
+ENV OUTPUT_DIR="/workspace/axolotl/outputs"
         
 COPY core /workspace/core
 COPY miner /workspace/miner

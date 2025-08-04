@@ -1,71 +1,66 @@
-adapter: lora
 base_model: NousResearch/Meta-Llama-3-8B-Instruct
-bf16: auto
-chat_template: llama3
-dataset_prepared_path:
-datasets:
-debug:
-deepspeed:
-early_stopping_patience:
-eval_max_new_tokens: 128
-eval_table_size:
-evals_per_epoch: null
-flash_attention: true
-fp16:
-fsdp:
-fsdp_config:
-gradient_accumulation_steps: 4
-gradient_checkpointing: false
-group_by_length: true
-hub_model_id:
-hub_repo:
-hub_strategy: checkpoint
-hub_token:
-learning_rate: 0.00010
-load_in_4bit: false
+model_type: AutoModelForCausalLM
+tokenizer_type: AutoTokenizer
+
 load_in_8bit: false
-local_rank:
-logging_steps: 10
-lora_alpha: 16
-lora_dropout: 0.05
-lora_fan_in_fan_out: null
+load_in_4bit: false
+strict: false
+
+chat_template: llama3
+datasets:
+dataset_prepared_path:
+val_set_size: 0.05
+output_dir: miner_id_24
+
+sequence_len: 512
+sample_packing: false
+pad_to_sequence_len: true
+trust_remote_code: true
+
+adapter: lora
 lora_model_dir:
 lora_r: 8
+lora_alpha: 16
+lora_dropout: 0.05
 lora_target_linear: true
-lr_scheduler: cosine
-max_steps: 10
+lora_fan_in_fan_out:
+
+gradient_accumulation_steps: 4
 micro_batch_size: 2
-model_type: AutoModelForCausalLM
 num_epochs: 1
-output_dir: miner_id_24
-pad_to_sequence_len: true
-resume_from_checkpoint:
-s2_attention:
-sample_packing: true
-save_steps: 50
-sequence_len: 512
-strict: false
-tf32: false
-tokenizer_type: AutoTokenizer
-train_on_inputs: false
-trust_remote_code: false
-val_set_size: 0.05
-wandb_entity:
-wandb_mode: online
-wandb_project: Gradients-On-Demand
-wandb_run:
-push_to_hub: true
-model_card: false
-wandb_runid: default
-warmup_steps: 50
-weight_decay: 0.02
-hf_upload_repo_type: model
-hf_upload_public: true
 optimizer: adamw_bnb_8bit
-xformers_attention: null
-gradient_checkpointing_kwargs: {
-  use_reentrant: false
-}
-device_map: cuda  # NOT "auto"
-ddp: true         # okay
-save_strategy: "steps"             # or "epoch"
+lr_scheduler: cosine
+learning_rate: 0.0002
+
+train_on_inputs: false
+group_by_length: false
+bf16: auto
+fp16:
+tf32: false
+
+gradient_checkpointing: false
+early_stopping_patience:
+resume_from_checkpoint:
+local_rank:
+logging_steps: 1
+xformers_attention:
+flash_attention: true
+s2_attention:
+
+wandb_project: Gradients-On-Demand
+wandb_entity:
+wandb_mode: offline
+wandb_run: your_name
+wandb_runid: default
+
+saves_per_epoch: 4
+warmup_steps: 10
+evals_per_epoch: 4
+eval_table_size:
+eval_max_new_tokens: 128
+max_steps: 10
+debug:
+deepspeed:
+weight_decay: 0.0
+fsdp:
+fsdp_config:

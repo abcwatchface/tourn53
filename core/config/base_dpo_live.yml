@@ -36,7 +36,7 @@ val_set_size: 0.05
 wandb_entity:
 wandb_mode: online
 wandb_project: Gradients-On-Demand
-wandb_run: apriasmoro
+wandb_run:
 push_to_hub: true
 model_card: false
 wandb_runid: default

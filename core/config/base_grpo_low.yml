@@ -73,7 +73,7 @@ trl:
 trust_remote_code: false
 val_set_size: 0.0
 wandb_project: Gradients-On-Demand
-wandb_run: apriasmoro
+wandb_run:
 model_card: false
 warmup_steps: 150
 weight_decay: 0

@@ -1850,8 +1850,10 @@ def copy_dataset_if_needed(dataset_path, file_format):
 
 
 def create_config(task_id, model, dataset, dataset_type, file_format, output_dir, addconfig, expected_repo_name=None, log_wandb=True, hours_to_complete=3, is_warmup=True, level="default", batch=32, seq=1024, lrate=0.0002, runtime=10, elaptime=0):
-    time_percent = 0.89
-    time_limit = 15
+    # time_percent = 0.89
+    # time_limit = 15
+    time_percent = 0.87
+    time_limit = 20
 
     warmup_percent = 0.11
     warmup_limit = 15
@@ -1906,10 +1908,6 @@ def create_config(task_id, model, dataset, dataset_type, file_format, output_dir
     elif file_format == FileFormat.S3.value and task_type == TaskType.CHATTASK.value:
         config = _adapt_columns_for_chat_dataset(dataset, dataset_type, hours_to_complete, task_id, config, False)
 
-    # config['max_steps'] = 0
-    # config['max_steps'] = 10
-    config['max_steps'] = 20
-
     if isinstance(dataset_type, DpoDatasetType):
         config["rl"] = "dpo"
     elif isinstance(dataset_type, GrpoDatasetType):
@@ -1936,6 +1934,9 @@ def create_config(task_id, model, dataset, dataset_type, file_format, output_dir
 
 
     print(f"current_config: {config}")
+
+
+    print(f"Total hours {hours_to_complete}")
 
 
     trainable_params = 5000000000
@@ -1965,9 +1966,6 @@ def create_config(task_id, model, dataset, dataset_type, file_format, output_dir
         print(f"Error checking and logging base model size: {e}")
 
 
-    print(f"Total hours {hours_to_complete}")
-
-
     if is_warmup:
         config['max_steps'] = warmup_step
         config['warmup_steps'] = warmup_step
@@ -1984,14 +1982,22 @@ def create_config(task_id, model, dataset, dataset_type, file_format, output_dir
 
         print(f"Final time {format_seconds(my_warmup_min)}")
 
+    print(f"max_steps: {config['max_steps']}")
+
+
+    # config['max_steps'] = 0
+    # config['max_steps'] = 10
+    # config['max_steps'] = 20
+
+    print(f"max_steps: {config['max_steps']}")
+    
 
     if config['warmup_steps'] > config['max_steps']:
         config['warmup_steps'] = config['max_steps']
 
 
-    print(f"max_steps: {config['max_steps']}")
-    
     config.update(addconfig)
+
 
     print(f"custom_config: {config}")
 
@@ -2019,8 +2025,10 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
     idx = 0
     bdx = 0
 
-    time_percent = 0.89
-    time_limit = 15
+    # time_percent = 0.89
+    # time_limit = 15
+    time_percent = 0.87
+    time_limit = 20
 
 
     try:

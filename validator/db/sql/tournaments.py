@@ -181,7 +181,7 @@ async def get_latest_completed_tournament(psql_db: PSQLDB, tournament_type: Tour
             SELECT {cst.TOURNAMENT_ID}, {cst.TOURNAMENT_TYPE}, {cst.TOURNAMENT_STATUS}, {cst.BASE_WINNER_HOTKEY}, {cst.WINNER_HOTKEY}
             FROM {cst.TOURNAMENTS_TABLE}
             WHERE {cst.TOURNAMENT_TYPE} = $1 AND {cst.TOURNAMENT_STATUS} = 'completed'
-            ORDER BY {cst.UPDATED_AT} DESC
+            ORDER BY {cst.CREATED_AT} DESC
             LIMIT 1
         """
         result = await connection.fetchrow(query, tournament_type.value)
@@ -726,6 +726,18 @@ async def get_training_attempts(task_id: str, hotkey: str, psql_db: PSQLDB) -> i
         return result[cst.N_TRAINING_ATTEMPTS] if result else 0
 
 
+async def get_training_status_for_task_and_hotkeys(task_id: str, hotkeys: list[str], psql_db: PSQLDB) -> dict[str, str]:
+    """Get the training status for a task and list of hotkeys"""
+    async with await psql_db.connection() as connection:
+        query = f"""
+            SELECT {cst.HOTKEY}, {cst.TRAINING_STATUS}
+            FROM {cst.TOURNAMENT_TASK_HOTKEY_TRAININGS_TABLE}
+            WHERE {cst.TASK_ID} = $1 AND {cst.HOTKEY} = ANY($2)
+        """
+        results = await connection.fetch(query, task_id, hotkeys)
+        return {row[cst.HOTKEY]: row[cst.TRAINING_STATUS] for row in results}
+
+
 async def get_tournament_training_repo_and_commit(hotkey: str, psql_db: PSQLDB) -> tuple[str | None, str | None]:
     """Get the training_repo and training_commit_hash for a hotkey from tournament_participants table"""
     async with await psql_db.connection() as connection:
@@ -978,6 +990,7 @@ async def get_latest_tournament_with_created_at(
                    {cst.BASE_WINNER_HOTKEY}, {cst.WINNER_HOTKEY}, {cst.CREATED_AT}
             FROM {cst.TOURNAMENTS_TABLE}
             WHERE {cst.TOURNAMENT_TYPE} = $1
+              AND {cst.TOURNAMENT_STATUS} != 'cancelled'
             ORDER BY {cst.CREATED_AT} DESC
             LIMIT 1
         """
@@ -993,6 +1006,35 @@ async def get_latest_tournament_with_created_at(
             created_at = result[cst.CREATED_AT]
             return tournament, created_at
         return None, None
+
+
+async def count_champion_consecutive_wins(
+    psql_db: PSQLDB, tournament_type: TournamentType, champion_hotkey: str
+) -> int:
+    """Count consecutive tournament wins for the current champion (their current winning streak)."""
+    async with await psql_db.connection() as connection:
+        # Get all completed tournaments ordered by date descending
+        query = f"""
+            SELECT {cst.WINNER_HOTKEY}, {cst.CREATED_AT}
+            FROM {cst.TOURNAMENTS_TABLE}
+            WHERE {cst.TOURNAMENT_TYPE} = $1 
+              AND {cst.TOURNAMENT_STATUS} = 'completed'
+            ORDER BY {cst.CREATED_AT} DESC
+        """
+        results = await connection.fetch(query, tournament_type.value)
+        
+        if not results:
+            return 0
+            
+        consecutive_wins = 0
+        for row in results:
+            if row[cst.WINNER_HOTKEY] == champion_hotkey:
+                consecutive_wins += 1
+            else:
+                # Stop counting when we hit a tournament won by someone else
+                break
+                
+        return consecutive_wins
 
 
 async def get_tournament_id_by_task_id(task_id: str, psql_db: PSQLDB) -> str | None:
