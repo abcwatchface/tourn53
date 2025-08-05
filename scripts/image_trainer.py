@@ -206,7 +206,7 @@ def create_config(task_id, model, model_type, expected_repo_name=None, hours_to_
                     print(f"all_params: {all_params}")
                     print(f"trainable_percent: {trainable_percent}")
 
-        config = customize_config(config, task_type, model, model_path, all_params)
+        # config = customize_config(config, task_type, model, model_path, all_params)
 
     except Exception as e:
         print(f"Error checking and logging base model size: {e}")
