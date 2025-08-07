@@ -62,6 +62,10 @@ RAYONLABS_HF_USERNAME = "rayonlabs"
 
 CUSTOM_DATASET_TYPE = "custom"
 
+TEXT_DEFAULT_FIELD_INSTRUCTION = "instruction"
+TEXT_DEFAULT_FIELD_INPUT = "input"
+TEXT_DEFAULT_FIELD_OUTPUT = "output"
+
 # DPO default dataset type
 DPO_DEFAULT_DATASET_TYPE = "chatml.default" 
 # Field names must match exactly what Axolotl's formatter expects

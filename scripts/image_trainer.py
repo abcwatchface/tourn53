@@ -154,11 +154,11 @@ def create_config(task_id, model, model_type, expected_repo_name=None, hours_to_
     # time_percent = 0.89
     # time_limit = 15
     time_percent = 0.87
-    time_limit = 20
+    time_limit = 15
 
     warmup_percent = 0.11
     warmup_limit = 15
-    warmup_step = 20
+    warmup_step = 10
 
     """Create the diffusion config file"""
     config_template_path = get_image_training_config_template_path(model_type, level)
@@ -272,7 +272,7 @@ def run_training(task_id, model, model_type, expected_repo_name, hours_to_comple
     # time_percent = 0.89
     # time_limit = 15
     time_percent = 0.87
-    time_limit = 20
+    time_limit = 15
 
 
     try:
@@ -382,9 +382,9 @@ def run_training(task_id, model, model_type, expected_repo_name, hours_to_comple
                         elif "This might be caused by insufficient shared memory" in line:
                             docker_error = "Insufficientshared"
                             sys.exit(docker_error) 
-                        elif elapsed_time > int(hours_to_complete*60*60*time_percent):
-                            docker_error = "Outoftimepercent"
-                            sys.exit(docker_error) 
+                        # elif elapsed_time > int(hours_to_complete*60*60*time_percent):
+                        #     docker_error = "Outoftimepercent"
+                        #     sys.exit(docker_error) 
                         elif elapsed_time > int((hours_to_complete*60*60)-(time_limit*60)):
                             docker_error = "Outoftimelimit"
                             sys.exit(docker_error) 
@@ -593,9 +593,9 @@ def run_training(task_id, model, model_type, expected_repo_name, hours_to_comple
                             elif "This might be caused by insufficient shared memory" in line:
                                 docker_error = "Insufficientshared"
                                 sys.exit(docker_error) 
-                            elif elapsed_time > int(hours_to_complete*60*60*time_percent):
-                                docker_error = "Outoftimepercent"
-                                sys.exit(docker_error) 
+                            # elif elapsed_time > int(hours_to_complete*60*60*time_percent):
+                            #     docker_error = "Outoftimepercent"
+                            #     sys.exit(docker_error) 
                             elif elapsed_time > int((hours_to_complete*60*60)-(time_limit*60)):
                                 docker_error = "Outoftimelimit"
                                 sys.exit(docker_error) 
