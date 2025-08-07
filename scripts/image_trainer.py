@@ -134,7 +134,7 @@ def parse_loss_logs(task_id: str):
     return entries
 
 
-def get_image_training_config_template_path(model_type: str, level="win") -> str:
+def get_image_training_config_template_path(model_type: str, level="mix") -> str:
     model_type = model_type.lower()
     if model_type == ImageModelType.SDXL.value:
         return str(pathlib.Path(train_cst.IMAGE_CONTAINER_CONFIG_TEMPLATE_PATH) / f"base_sdxl_{level}.toml")
@@ -150,14 +150,14 @@ def get_model_path(path: str) -> str:
     return path
 
 
-def create_config(task_id, model, model_type, expected_repo_name=None, hours_to_complete=2, is_warmup=True, level="win", batch=32, seq=1024, lrate=0.0002, runtime=10, elaptime=0):
+def create_config(task_id, model, model_type, expected_repo_name=None, hours_to_complete=2, is_warmup=True, level="mix", batch=32, seq=1024, lrate=0.0002, runtime=10, elaptime=0):
     # time_percent = 0.89
     # time_limit = 15
     time_percent = 0.87
     time_limit = 15
 
     warmup_percent = 0.11
-    warmup_limit = 15
+    warmup_limit = 10
     warmup_step = 10
 
     """Create the diffusion config file"""
@@ -258,7 +258,7 @@ def create_config(task_id, model, model_type, expected_repo_name=None, hours_to_
 def run_training(task_id, model, model_type, expected_repo_name, hours_to_complete=2):
     start_time = time.time()
 
-    docker_level = ["win","live","low"]
+    docker_level = ["mix","win","live","low"]
     docker_batch = [8,8,8,4,4,4]
     docker_seq = ["1024,1024","768,768","512,512","1024,1024","768,768","512,512","1024,1024","768,768","512,512","1024,1024","768,768","512,512"]
     docker_lrate = 0.0002
@@ -466,7 +466,7 @@ def run_training(task_id, model, model_type, expected_repo_name, hours_to_comple
                 idx = idx + 1
                 docker_failed = True
 
-                raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
+                # raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
 
 
     except Exception as e:
@@ -677,7 +677,7 @@ def run_training(task_id, model, model_type, expected_repo_name, hours_to_comple
                     idx = idx + 1
                     docker_failed = True
 
-                    raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
+                    # raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
 
 
         except Exception as e:
