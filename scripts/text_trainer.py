@@ -2197,9 +2197,9 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
                         elif "DPOTrainer.create_model_card" in line:
                             docker_error = "Dpotrainermodelcard"
                             sys.exit(docker_error) 
-                        elif elapsed_time > int(hours_to_complete*60*60*time_percent):
-                            docker_error = "Outoftimepercent"
-                            sys.exit(docker_error) 
+                        # elif elapsed_time > int(hours_to_complete*60*60*time_percent):
+                        #     docker_error = "Outoftimepercent"
+                        #     sys.exit(docker_error) 
                         elif elapsed_time > int((hours_to_complete*60*60)-(time_limit*60)):
                             docker_error = "Outoftimelimit"
                             sys.exit(docker_error) 
@@ -2273,7 +2273,7 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
                 idx = idx + 1
                 docker_failed = True
 
-                raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
+                # raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
 
 
     except Exception as e:
@@ -2415,9 +2415,9 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
                             elif "DPOTrainer.create_model_card" in line:
                                 docker_error = "Dpotrainermodelcard"
                                 sys.exit(docker_error) 
-                            elif elapsed_time > int(hours_to_complete*60*60*time_percent):
-                                docker_error = "Outoftimepercent"
-                                sys.exit(docker_error) 
+                            # elif elapsed_time > int(hours_to_complete*60*60*time_percent):
+                            #     docker_error = "Outoftimepercent"
+                            #     sys.exit(docker_error) 
                             elif elapsed_time > int((hours_to_complete*60*60)-(time_limit*60)):
                                 docker_error = "Outoftimelimit"
                                 sys.exit(docker_error) 
@@ -2490,7 +2490,7 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
                     idx = idx + 1
                     docker_failed = True
 
-                    raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
+                    # raise RuntimeError(f"Training subprocess failed with exit code {e.returncode}")
 
 
         except Exception as e:
