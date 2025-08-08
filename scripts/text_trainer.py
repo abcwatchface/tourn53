@@ -1912,11 +1912,11 @@ def create_config(task_id, model, dataset, dataset_type, file_format, output_dir
     # time_percent = 0.89
     # time_limit = 15
     time_percent = 0.87
-    time_limit = 20
+    time_limit = 25
 
     warmup_percent = 0.11
-    warmup_limit = 15
-    warmup_step = 30
+    warmup_limit = 20
+    warmup_step = 10
 
     """Create the axolotl config file with appropriate settings."""
     config_path = get_axolotl_base_config_path(dataset_type, level)
@@ -2089,7 +2089,7 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
     # time_percent = 0.89
     # time_limit = 15
     time_percent = 0.87
-    time_limit = 20
+    time_limit = 25
 
 
     try:
