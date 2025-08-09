@@ -1911,7 +1911,7 @@ def copy_dataset_if_needed(dataset_path, file_format):
 def create_config(task_id, model, dataset, dataset_type, file_format, output_dir, addconfig, expected_repo_name=None, log_wandb=True, hours_to_complete=3, is_warmup=True, level="default", batch=32, seq=1024, lrate=0.0002, runtime=10, elaptime=0):
     # time_percent = 0.89
     # time_limit = 15
-    time_percent = 0.87
+    time_percent = 0.85
     time_limit = 25
 
     warmup_percent = 0.11
@@ -2088,7 +2088,7 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
 
     # time_percent = 0.89
     # time_limit = 15
-    time_percent = 0.87
+    time_percent = 0.85
     time_limit = 25
 
 
@@ -2197,9 +2197,9 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
                         elif "DPOTrainer.create_model_card" in line:
                             docker_error = "Dpotrainermodelcard"
                             sys.exit(docker_error) 
-                        # elif elapsed_time > int(hours_to_complete*60*60*time_percent):
-                        #     docker_error = "Outoftimepercent"
-                        #     sys.exit(docker_error) 
+                        elif elapsed_time > int(hours_to_complete*60*60*time_percent):
+                            docker_error = "Outoftimepercent"
+                            sys.exit(docker_error) 
                         elif elapsed_time > int((hours_to_complete*60*60)-(time_limit*60)):
                             docker_error = "Outoftimelimit"
                             sys.exit(docker_error) 
@@ -2415,9 +2415,9 @@ def run_training(task_id, model, dataset, dataset_type, file_format, output_dir,
                             elif "DPOTrainer.create_model_card" in line:
                                 docker_error = "Dpotrainermodelcard"
                                 sys.exit(docker_error) 
-                            # elif elapsed_time > int(hours_to_complete*60*60*time_percent):
-                            #     docker_error = "Outoftimepercent"
-                            #     sys.exit(docker_error) 
+                            elif elapsed_time > int(hours_to_complete*60*60*time_percent):
+                                docker_error = "Outoftimepercent"
+                                sys.exit(docker_error) 
                             elif elapsed_time > int((hours_to_complete*60*60)-(time_limit*60)):
                                 docker_error = "Outoftimelimit"
                                 sys.exit(docker_error) 

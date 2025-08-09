@@ -134,7 +134,7 @@ def parse_loss_logs(task_id: str):
     return entries
 
 
-def get_image_training_config_template_path(model_type: str, level="mix") -> str:
+def get_image_training_config_template_path(model_type: str, level="win") -> str:
     model_type = model_type.lower()
     if model_type == ImageModelType.SDXL.value:
         return str(pathlib.Path(train_cst.IMAGE_CONTAINER_CONFIG_TEMPLATE_PATH) / f"base_sdxl_{level}.toml")
@@ -150,7 +150,7 @@ def get_model_path(path: str) -> str:
     return path
 
 
-def create_config(task_id, model, model_type, expected_repo_name=None, hours_to_complete=2, is_warmup=True, level="mix", batch=32, seq=1024, lrate=0.0002, runtime=10, elaptime=0):
+def create_config(task_id, model, model_type, expected_repo_name=None, hours_to_complete=2, is_warmup=True, level="win", batch=32, seq=1024, lrate=0.0002, runtime=10, elaptime=0):
     # time_percent = 0.89
     # time_limit = 15
     time_percent = 0.87
@@ -258,8 +258,8 @@ def create_config(task_id, model, model_type, expected_repo_name=None, hours_to_
 def run_training(task_id, model, model_type, expected_repo_name, hours_to_complete=2):
     start_time = time.time()
 
-    docker_level = ["win","live","low"]
-    docker_batch = [12,12,12,8,8,8,4,4,4]
+    docker_level = ["win","mix","live","low"]
+    docker_batch = [16,16,16,12,12,12,8,8,8,4,4,4]
     docker_seq = ["1024,1024","768,768","512,512","1024,1024","768,768","512,512","1024,1024","768,768","512,512","1024,1024","768,768","512,512"]
     docker_lrate = 0.0002
     docker_runtime = 10
@@ -382,9 +382,9 @@ def run_training(task_id, model, model_type, expected_repo_name, hours_to_comple
                         elif "This might be caused by insufficient shared memory" in line:
                             docker_error = "Insufficientshared"
                             sys.exit(docker_error) 
-                        # elif elapsed_time > int(hours_to_complete*60*60*time_percent):
-                        #     docker_error = "Outoftimepercent"
-                        #     sys.exit(docker_error) 
+                        elif elapsed_time > int(hours_to_complete*60*60*time_percent):
+                            docker_error = "Outoftimepercent"
+                            sys.exit(docker_error) 
                         elif elapsed_time > int((hours_to_complete*60*60)-(time_limit*60)):
                             docker_error = "Outoftimelimit"
                             sys.exit(docker_error) 
@@ -593,9 +593,9 @@ def run_training(task_id, model, model_type, expected_repo_name, hours_to_comple
                             elif "This might be caused by insufficient shared memory" in line:
                                 docker_error = "Insufficientshared"
                                 sys.exit(docker_error) 
-                            # elif elapsed_time > int(hours_to_complete*60*60*time_percent):
-                            #     docker_error = "Outoftimepercent"
-                            #     sys.exit(docker_error) 
+                            elif elapsed_time > int(hours_to_complete*60*60*time_percent):
+                                docker_error = "Outoftimepercent"
+                                sys.exit(docker_error) 
                             elif elapsed_time > int((hours_to_complete*60*60)-(time_limit*60)):
                                 docker_error = "Outoftimelimit"
                                 sys.exit(docker_error) 
