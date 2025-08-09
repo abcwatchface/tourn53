@@ -60,3 +60,4 @@ training_comment = ""
 unet_lr = 0.0002
 vae_batch_size = 16
 xformers = true
+validate_dataset = true
